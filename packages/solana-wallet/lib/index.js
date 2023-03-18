@@ -48,16 +48,17 @@ const encryptKey = async (self, value) => {
 }
 
 const init = async (self, seed) => {
-  const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
+  const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
   const childkey = hdkey.derive("m/44'/501'/0'/0'");
-  const account = Keypair.fromSeed(childkey.privateKey)
+  const account = Keypair.fromSeed(childkey.privateKey);
 
-  const {cipher, iv} = await encryptKey(self, account.secretKey)
-  self.accountPrivKey = self.enclave.pack(cipher)
-  self.iv = self.enclave.pack(iv)
-  self.publicKey = account.publicKey
+  self.storage = Storage()
+  await self.storage.open()
 
-  return mnemonic
+  const {cipher, iv} = await encryptKey(self, account.secretKey);
+  self.accountPrivKey = self.enclave.pack(cipher);
+  self.iv = self.enclave.pack(iv);
+  self.publicKey = account.publicKey;
 }
 
 const Wallet = Record({

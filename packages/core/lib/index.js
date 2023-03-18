@@ -1,23 +1,32 @@
 import Record from '@ppoliani/im-record'
 import {Web3AuthNoModal} from "@web3auth/no-modal";
 import {OpenloginAdapter} from "@web3auth/openlogin-adapter";
-import {ADAPTER_EVENTS} from "@web3auth/base";
+import {ADAPTER_EVENTS, WALLET_ADAPTERS} from "@web3auth/base";
 import * as account from './account'
 
 const noop = () => {}
 
-const createNewWallet = async (self, vaultClientToken, vaultEntityId) => {
-  const custodyWallet = self.Wallet()
-  const mnemonic = await custodyWallet.init()
+const createNewWallet = async (self) => {
+  await initWeb3Auth(self, "");
   
-  // if it's new then most likely there is no vault encryption key for the given entityId
-  await self.vault.createKey(vaultClientToken, vaultEntityId)
+  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
+  const custodyWallet = self.Wallet();
+  await custodyWallet.init(seed);
 
-  const encryptedMnemonic = await self.vault.encrypt(vaultClientToken, vaultEntityId, mnemonic)
-  await self.createAccount(encryptedMnemonic, custodyWallet.publicKey)
-  custodyWallet.mnemonic = encryptedMnemonic;
+  // Connect auth 2.0 account with web3Auth
+  await self.web3Auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+    loginProvider: "jwt",
+    extraLoginOptions: {
+      id_token: await self.authProvider.idToken(),
+      verifierIdField: "sub", // same as your JWT Verifier ID
+      domain: self.web3AuthConfig.domain,
+    },
+  });
 
-  return custodyWallet
+  const user = await self.web3Auth.getUserInfo();
+  await self.createAccount(user.dappShare, custodyWallet.publicKey)
+
+  return custodyWallet;
 }
 
 const restoreExistingWallet = async (self, dappShare) => {
@@ -87,7 +96,7 @@ const bootstrap = async (self) => {
   }
   catch(error) {
     if(error.status == 404) {
-      return await createNewWallet(self, vaultClientToken, vaultEntityId)
+      return await createNewWallet(self)
     }
 
     throw error
@@ -102,13 +111,12 @@ const init = (
   onEvent = noop,
 ) => {
   self.walletApi = walletApi;
-  self.vault = Vault({vaultApi});
   self.authProvider = authProvider;
   self.web3AuthConfig = web3AuthConfig;
   self.onEvent = onEvent;
 }
 
-const WalletCore = Record({
+export const WalletCore = Record({
   walletApi: '',
   Wallet: null,
   authProvider: null,
@@ -121,4 +129,4 @@ const WalletCore = Record({
   ...account,
 });
 
-export default WalletCore;
+export * as constants from './constants'

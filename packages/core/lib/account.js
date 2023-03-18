@@ -10,13 +10,13 @@ export const fetchAccount = async (self) => {
   )
 }
 
-export const createAccount = async (self, mnemonic, pubkey) => {
+export const createAccount = async (self, dappShare, pubkey) => {
   return await fetch(
     `${self.eutopicApi}/accounts`,
     'POST',
     {
       body: {
-        mnemonic,
+        dappShare,
         pubkey,
       },
       headers: createBearerHeader(await self.authProvider.accessToken())

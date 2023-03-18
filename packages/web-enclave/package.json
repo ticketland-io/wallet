@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@ppoliani/im-record": "^2.0.0",
-    "@ticketland-io/indexdb-storage": "^0.1.13"
+    "@ticketland-io/indexdb-storage": "^0.1.0"
   }
 }

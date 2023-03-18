@@ -33,7 +33,7 @@ const createNewWallet = async (self) => {
 
   // create the user on the back end
   const user = await self.web3Auth.getUserInfo();
-  await self.createAccount(user.dappShare, custodyWallet.publicKey)
+  await self.createAccount(user.dappShare, custodyWallet.publicKey.toBase58())
 
   const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
   const custodyWallet = self.Wallet();
@@ -78,8 +78,8 @@ const initWeb3Auth = async (self, dappShare) => {
       clientId,
       uxMode: "redirect",
       network: web3AuthNetwork,
-      mfaLevel: 'mandatory',
       loginConfig: {
+        mfaLevel: 'mandatory',
         jwt: {
           verifier,
           typeOfLogin: "jwt",

@@ -1,5 +1,4 @@
 import Record from '@ppoliani/im-record'
-import Vault from './vault'
 import * as account from './account'
 
 const createNewWallet = async (self, vaultClientToken, vaultEntityId) => {
@@ -43,15 +42,14 @@ const bootstrap = async (self, currentUser) => {
   }
 }
 
-const init = (self, vaultApi, eutopicApi, authProvider) => {
-  self.eutopicApi = eutopicApi
+const init = (self, walletApi, authProvider) => {
+  self.walletApi = walletApi
   self.vault = Vault({vaultApi})
   self.authProvider = authProvider
 }
 
-const EutopicCore = Record({
-  eutopicApi: '',
-  vault: null,
+const WalletCore = Record({
+  walletApi: '',
   Wallet: null,
   authProvider: null,
 
@@ -61,4 +59,4 @@ const EutopicCore = Record({
   ...account,
 })
 
-export default EutopicCore
+export default WalletCore

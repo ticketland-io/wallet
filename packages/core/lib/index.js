@@ -13,7 +13,7 @@ const createNewWallet = async (self) => {
   await self.web3Auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
     loginProvider: "jwt",
     extraLoginOptions: {
-      id_token: await self.authProvider.idToken(),
+      id_token: await self.authProvider.getIdToken(),
       verifierIdField: "sub", // same as your JWT Verifier ID
       domain: self.web3AuthConfig.domain,
     },

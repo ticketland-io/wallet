@@ -3,8 +3,8 @@ import Record from '@ppoliani/im-record'
 const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
 // this is a fixed id; we want just one entry anyways
-const KEY_ID = '@@eutopic'
-const DB_NAME = 'eutopic_db'
+const KEY_ID = '@@ticketland'
+const DB_NAME = 'ticketland_db'
 
 const open = (self) => new Promise((res, rej) => {
   const request = indexedDB.open(DB_NAME)

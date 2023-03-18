@@ -1,4 +1,4 @@
-import {fetch, createBearerHeader} from '@ticketland-io/eutopic-common'
+import {fetch, createBearerHeader} from '@ticketland-io/wallet-common'
 
 export const fetchAccount = async (self) => {  
   return await fetch(

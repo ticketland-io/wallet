@@ -6,18 +6,30 @@ import * as account from './account'
 
 const noop = () => {}
 
+const isConnected = async (self) => {
+  try {
+    const user = await self.web3Auth.getUserInfo();
+    return Boolean(user)
+  } catch(_) {
+    return false
+  }
+}
+
 const createNewWallet = async (self) => {
   await initWeb3Auth(self, undefined);
 
-  // Connect auth 2.0 account with web3Auth
-  await self.web3Auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-    loginProvider: "jwt",
-    extraLoginOptions: {
-      id_token: await self.authProvider.getIdToken(),
-      verifierIdField: "sub", // same as your JWT Verifier ID
-      domain: self.web3AuthConfig.domain,
-    },
-  });
+  // check if user already exist. If that's the case we don't have to call connectTo
+  if (!await isConnected(self)) {
+    // Connect auth 2.0 account with web3Auth
+    await self.web3Auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+      loginProvider: "jwt",
+      extraLoginOptions: {
+        id_token: await self.authProvider.getIdToken(),
+        verifierIdField: "sub", // same as your JWT Verifier ID
+        domain: self.web3AuthConfig.domain,
+      },
+    });
+  }
 
   // create the user on the back end
   const user = await self.web3Auth.getUserInfo();

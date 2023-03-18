@@ -12,6 +12,7 @@
   "dependencies": {
     "@ppoliani/im-record": "^2.0.0",
     "@project-serum/anchor": "^0.26.0",
+    "hdkey": "^2.1.0",
     "keccak256": "^1.0.6",
     "tweetnacl": "^1.0.3"
   }

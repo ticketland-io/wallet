@@ -1,9 +1,9 @@
 import * as anchor from '@project-serum/anchor'
-import * as Bip39 from 'bip39'
+import HDKey from 'hdkey'
 import nacl from 'tweetnacl'
 import keccak256 from 'keccak256'
 import Record from '@ppoliani/im-record'
-import Storage from '@ticketland-io/eutopic-indexdb-storage'
+import Storage from '@ticketland-io/indexdb-storage'
 
 const {Keypair} = anchor.web3
 
@@ -47,13 +47,10 @@ const encryptKey = async (self, value) => {
   return await self.enclave.encrypt(value, key)
 }
 
-const init = async (self, mnemonic=Bip39.generateMnemonic()) => {
-  const seed = (await Bip39.mnemonicToSeed(mnemonic)).slice(0, 32)
-  const account = Keypair.fromSeed(seed)
-
-  self.storage = Storage()
-
-  await self.storage.open()
+const init = async (self, seed) => {
+  const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'))
+  const childkey = hdkey.derive("m/44'/501'/0'/0'");
+  const account = Keypair.fromSeed(childkey.privateKey)
 
   const {cipher, iv} = await encryptKey(self, account.secretKey)
   self.accountPrivKey = self.enclave.pack(cipher)

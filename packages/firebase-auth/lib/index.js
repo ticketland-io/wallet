@@ -37,12 +37,16 @@ const signInWithApple = async () => await signInWithPopup(auth, providers.apple)
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
+const getIdToken = async (forceRefresh = true) => {
+  await auth.currentUser.getIdToken(forceRefresh)
+}
+
 const accessToken = async () => {
   const now = Date.now() / 1000
   const token = jwt_decode(auth.currentUser.accessToken)
 
   if (now > token.exp) {
-    await auth.currentUser.getIdToken(true)
+    await getIdToken()
   }
 
   return auth.currentUser.accessToken
@@ -54,6 +58,7 @@ const signOutUser = () => signOut(auth)
 const Auth = Record({
   // Auth interface
   accessToken,
+  getIdToken,
   onUserChanged,
   signOutUser,
   signInWithGoogle,

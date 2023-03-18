@@ -95,13 +95,17 @@ const signInWithTwitter = async () => {
 
 const curAuth = auth()
 
+const getIdToken = async (forceRefresh = true) => {
+  await curAuth.currentUser.getIdToken(forceRefresh)
+}
+
 const accessToken = async () => {
   const now = Date.now() / 1000
   const idToken = await curAuth.currentUser.getIdToken()
   const token = jwt_decode(idToken)
 
   if (now > token.exp) {
-    await curAuth.currentUser.getIdToken(true)
+    await getIdToken()
   }
 
   return idToken

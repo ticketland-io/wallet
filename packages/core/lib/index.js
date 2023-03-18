@@ -23,9 +23,9 @@ const createNewWallet = async (self, vaultClientToken, vaultEntityId) => {
 const restoreExistingWallet = async (self, dappShare) => {
   await initWeb3Auth(self, dappShare)
 
-  const privateKey = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
+  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
   const custodyWallet = self.Wallet()
-  await custodyWallet.init(privateKey)
+  await custodyWallet.init(seed)
 
   return custodyWallet
 }

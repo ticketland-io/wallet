@@ -1,6 +1,6 @@
 {
   "name": "@ticketland-io/solana-wallet-rn",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "BUSL-1.1",
   "main": "lib/index.js",
   "author": "Pavlos Polianidis <pavlos@ticketland.io> (https://ticketland.io)",

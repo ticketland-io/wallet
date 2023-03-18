@@ -22,8 +22,10 @@ const createNewWallet = async (self, vaultClientToken, vaultEntityId) => {
 
 const restoreExistingWallet = async (self, dappShare) => {
   await initWeb3Auth(self, dappShare)
+
+  const privateKey = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
   const custodyWallet = self.Wallet()
-  await custodyWallet.init(mnemonic)
+  await custodyWallet.init(privateKey)
 
   return custodyWallet
 }
@@ -37,7 +39,7 @@ const initWeb3Auth = async (self, dappShare) => {
     rpcTarget,
     sessionTime = 86400 * 7, // 7 days
     web3AuthNetwork = "mainnet",
-  } = config;
+  } = self.web3AuthConfig;
 
 
   const web3Auth = new Web3AuthNoModal({
@@ -78,9 +80,7 @@ const initWeb3Auth = async (self, dappShare) => {
   self.web3Auth.on(ADAPTER_EVENTS.ERRORED, (error) => self.onEvent(ADAPTER_EVENTS.ERRORED, error));
 }
 
-const bootstrap = async (self, currentUser) => {
-  const idToken = await currentUser.getIdToken();
-
+const bootstrap = async (self) => {
   try {
     const account = await self.fetchAccount()
     return await restoreExistingWallet(self, account.dappShare)

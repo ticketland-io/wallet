@@ -1,0 +1,22 @@
+{
+  "name": "@ticketland-io/firebase-auth-rn",
+  "version": "0.1.0",
+  "license": "BUSL-1.1",
+  "main": "lib/index.js",
+  "author": "Pavlos Polianidis <pavlos@ticketland.io> (https://ticketland.io)",
+  "repository": "git@github.com:ticketland-io/wallet.git",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "@invertase/react-native-apple-authentication": "^2.2.2",
+    "@ppoliani/im-record": "^2.0.0",
+    "@react-native-firebase/auth": "^17.3.2",
+    "@react-native-google-signin/google-signin": "^9.0.2",
+    "@react-native-twitter-signin/twitter-signin": "git+https://github.com/ticketland-io/twitter-signin.git",
+    "jwt-decode": "^3.1.2",
+    "react-native": "^0.71.4",
+    "react-native-fbsdk-next": "^11.1.0"
+  }
+}

@@ -8,10 +8,6 @@ const noop = () => {}
 
 const createNewWallet = async (self) => {
   await initWeb3Auth(self, "");
-  
-  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
-  const custodyWallet = self.Wallet();
-  await custodyWallet.init(seed);
 
   // Connect auth 2.0 account with web3Auth
   await self.web3Auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
@@ -23,6 +19,9 @@ const createNewWallet = async (self) => {
     },
   });
 
+  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
+  const custodyWallet = self.Wallet();
+  await custodyWallet.init(seed);
   const user = await self.web3Auth.getUserInfo();
   await self.createAccount(user.dappShare, custodyWallet.publicKey)
 

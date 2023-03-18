@@ -63,7 +63,6 @@ const initWeb3Auth = async (self, dappShare) => {
     web3AuthNetwork = "mainnet",
   } = self.web3AuthConfig;
 
-
   const web3Auth = new Web3AuthNoModal({
     authMode: 'DAPP',
     clientId,

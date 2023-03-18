@@ -1,5 +1,10 @@
 import Record from '@ppoliani/im-record'
+import {Web3AuthNoModal} from "@web3auth/no-modal";
+import {OpenloginAdapter} from "@web3auth/openlogin-adapter";
+import {ADAPTER_EVENTS} from "@web3auth/base";
 import * as account from './account'
+
+const noop = () => {}
 
 const createNewWallet = async (self, vaultClientToken, vaultEntityId) => {
   const custodyWallet = self.Wallet()
@@ -15,23 +20,70 @@ const createNewWallet = async (self, vaultClientToken, vaultEntityId) => {
   return custodyWallet
 }
 
-const restoreExistingWallet = async (self, mnemonic) => {
+const restoreExistingWallet = async (self, dappShare) => {
+  await initWeb3Auth(self, dappShare)
   const custodyWallet = self.Wallet()
   await custodyWallet.init(mnemonic)
 
   return custodyWallet
 }
 
+const initWeb3Auth = async (self, dappShare) => {
+  const {
+    clientId,
+    verifier,
+    chainId,
+    chainNamespace,
+    rpcTarget,
+    sessionTime = 86400 * 7, // 7 days
+    web3AuthNetwork = "mainnet",
+  } = config;
+
+
+  const web3Auth = new Web3AuthNoModal({
+    authMode: 'DAPP',
+    clientId,
+    chainConfig: {chainNamespace, chainId, rpcTarget},
+    sessionTime,
+    web3AuthNetwork,
+    useCoreKitKey: false,
+  });
+
+  const openloginAdapter = new OpenloginAdapter({
+    adapterSettings: {
+      clientId,
+      uxMode: "redirect",
+      network: web3AuthNetwork,
+      mfaLevel: 'mandatory',
+      loginConfig: {
+        jwt: {
+          verifier,
+          typeOfLogin: "jwt",
+          clientId,
+        },
+      },
+    },
+    loginSettings: {
+      dappShare,
+    }
+  });
+  
+  web3Auth.configureAdapter(openloginAdapter);
+
+  await web3Auth.init();
+  self.web3Auth = web3Auth;
+
+  self.web3Auth.on(ADAPTER_EVENTS.CONNECTING, () => self.onEvent(ADAPTER_EVENTS.CONNECTING));
+  self.web3Auth.on(ADAPTER_EVENTS.DISCONNECTED, () => self.onEvent(ADAPTER_EVENTS.DISCONNECTED));
+  self.web3Auth.on(ADAPTER_EVENTS.ERRORED, (error) => self.onEvent(ADAPTER_EVENTS.ERRORED, error));
+}
+
 const bootstrap = async (self, currentUser) => {
-  const vaultAuthResponse = await self.vault.login(await currentUser.getIdToken())
-  const vaultClientToken = vaultAuthResponse.auth.client_token
-  const vaultEntityId = vaultAuthResponse.auth.entity_id
+  const idToken = await currentUser.getIdToken();
 
   try {
     const account = await self.fetchAccount()
-    const mnemonic = await self.vault.decrypt(vaultClientToken, vaultEntityId, account.mnemonic)
-
-    return await restoreExistingWallet(self, atob(mnemonic))
+    return await restoreExistingWallet(self, account.dappShare)
   }
   catch(error) {
     if(error.status == 404) {
@@ -42,21 +94,31 @@ const bootstrap = async (self, currentUser) => {
   }
 }
 
-const init = (self, walletApi, authProvider) => {
-  self.walletApi = walletApi
-  self.vault = Vault({vaultApi})
-  self.authProvider = authProvider
+const init = (
+  self,
+  walletApi,
+  authProvider,
+  web3AuthConfig,
+  onEvent = noop,
+) => {
+  self.walletApi = walletApi;
+  self.vault = Vault({vaultApi});
+  self.authProvider = authProvider;
+  self.web3AuthConfig = web3AuthConfig;
+  self.onEvent = onEvent;
 }
 
 const WalletCore = Record({
   walletApi: '',
   Wallet: null,
   authProvider: null,
-
+  web3Auth: null,
+  web3AuthConfig: null,
+  
   init,
   bootstrap,
 
   ...account,
-})
+});
 
-export default WalletCore
+export default WalletCore;

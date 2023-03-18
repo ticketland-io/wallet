@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@ppoliani/im-record": "^2.0.0",
-    "@ticketland-io/wallet-common": "^0.1.0"
+    "@ticketland-io/wallet-common": "^0.1.0",
+    "@web3auth/base": "^5.0.1",
+    "@web3auth/no-modal": "^5.0.1",
+    "@web3auth/openlogin-adapter": "^5.0.1"
   }
 }

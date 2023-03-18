@@ -96,7 +96,7 @@ const signInWithTwitter = async () => {
 const curAuth = auth()
 
 const getIdToken = async (forceRefresh = true) => {
-  await curAuth.currentUser.getIdToken(forceRefresh)
+  return await curAuth.currentUser.getIdToken(forceRefresh)
 }
 
 const accessToken = async () => {

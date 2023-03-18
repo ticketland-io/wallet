@@ -38,7 +38,7 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
 const getIdToken = async (forceRefresh = true) => {
-  await auth.currentUser.getIdToken(forceRefresh)
+  return await auth.currentUser.getIdToken(forceRefresh)
 }
 
 const accessToken = async () => {

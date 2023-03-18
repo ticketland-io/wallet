@@ -71,6 +71,7 @@ const Wallet = Record({
   // must set during creation not initialization!
   enclave: null,
   seed: null,
+  publicKey: null,
   storage: null,
   iv: null,
 

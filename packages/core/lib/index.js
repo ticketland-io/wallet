@@ -104,7 +104,7 @@ const initWeb3Auth = async (self, dappShare) => {
 const bootstrap = async (self) => {
   try {
     const account = await self.fetchAccount()
-    return await restoreExistingWallet(self, account.dappShare)
+    return await restoreExistingWallet(self, account.dapp_share)
   }
   catch(error) {
     if(error.status == 404) {

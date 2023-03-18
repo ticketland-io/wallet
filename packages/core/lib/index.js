@@ -77,7 +77,6 @@ const initWeb3Auth = async (self, dappShare) => {
       uxMode: "redirect",
       network: web3AuthNetwork,
       loginConfig: {
-        mfaLevel: 'mandatory',
         jwt: {
           verifier,
           typeOfLogin: "jwt",
@@ -86,6 +85,7 @@ const initWeb3Auth = async (self, dappShare) => {
       },
     },
     loginSettings: {
+      mfaLevel: 'mandatory',
       dappShare,
     }
   });

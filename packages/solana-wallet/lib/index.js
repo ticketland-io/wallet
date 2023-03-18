@@ -47,10 +47,14 @@ const encryptKey = async (self, value) => {
   return await self.enclave.encrypt(value, key)
 }
 
-const init = async (self, seed) => {
+const createAccount = async (seed, index) => {
   const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
-  const childkey = hdkey.derive("m/44'/501'/0'/0'");
-  const account = Keypair.fromSeed(childkey.privateKey);
+  const childkey = hdkey.derive(`m/44'/501'/0'/${index}'`);
+  return Keypair.fromSeed(childkey.privateKey);
+}
+
+const init = async (self, seed) => {
+  const account = await createAccount(seed, 0)
 
   self.storage = Storage()
   await self.storage.open()

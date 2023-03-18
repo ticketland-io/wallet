@@ -1,0 +1,16 @@
+{
+  "name": "@ticketland-io/wallet-core",
+  "version": "0.1.0",
+  "license": "BUSL-1.1",
+  "main": "lib/index.js",
+  "author": "Pavlos Polianidis <pavlos@ticketland.io> (https://ticketland.io)",
+  "repository": "git@github.com:ticketland-io/wallet.git",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "@ppoliani/im-record": "^2.0.0",
+    "@ticketland-io/wallet-common": "^0.1.0"
+  }
+}

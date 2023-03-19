@@ -31,11 +31,12 @@ const createNewWallet = async (self) => {
     });
   }
 
-  // create the user on the back end
   const user = await self.web3Auth.getUserInfo();
   const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed);
+  
+  // create the user on the back end
   await self.createAccount(user.dappShare, custodyWallet.publicKey.toBase58())
 
   return custodyWallet;

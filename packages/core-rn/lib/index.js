@@ -5,12 +5,15 @@ import * as account from './account';
 
 const createNewWallet = async (self) => {
   await initWeb3Auth(self, undefined);
-  const seed = self.userInfo.privKey;
+  const seed = self.webAuthState.privKey;
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed);
 
   // create the user on the back end
-  await self.createAccount(user.dappShare, custodyWallet.publicKey.toBase58());
+  await self.createAccount(
+    self.webAuthState.userInfo.dappShare,
+    custodyWallet.publicKey.toBase58()
+  );
 
   return custodyWallet;
 }
@@ -18,7 +21,7 @@ const createNewWallet = async (self) => {
 const restoreExistingWallet = async (self, dappShare) => {
   await initWeb3Auth(self, dappShare);
 
-  const seed = self.userInfo.privKey;
+  const seed = self.webAuthState.privKey;
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed);
 
@@ -49,7 +52,7 @@ const initWeb3Auth = async (self, dappShare) => {
     },
   });
 
-  self.userInfo = await web3Auth.login({
+  self.webAuthState = await web3Auth.login({
     loginProvider: LOGIN_PROVIDER.JWT,
     redirectUrl,
     dappShare,
@@ -92,7 +95,7 @@ export const WalletCore = Record({
   walletApi: '',
   Wallet: null,
   authProvider: null,
-  userInfo: null,
+  webAuthState: null,
   web3AuthConfig: null,
   
   init,

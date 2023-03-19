@@ -1,6 +1,6 @@
 {
   "name": "@ticketland-io/web-enclave",
-  "version": "0.1.3",
+  "version": "0.1.0",
   "license": "BUSL-1.1",
   "main": "lib/index.js",
   "author": "Pavlos Polianidis <pavlos@ticketland.io> (https://ticketland.io)",

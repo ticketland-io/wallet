@@ -32,12 +32,12 @@ const initWeb3Auth = async (self, dappShare) => {
   const {
     clientId,
     verifier,
-    network = OPENLOGIN_NETWORK.MAINNET,
     domain,
+    scheme = 'io.ticketland.app',
+    network = OPENLOGIN_NETWORK.MAINNET,
     sessionTime = 86400 * 7,
   } = self.web3AuthConfig;
 
-  const scheme = 'web3authrnbarefirebase'; // Or your desired app redirection scheme
   const redirectUrl = `${scheme}://openlogin`;
 
   const web3Auth = new Web3Auth(WebBrowser, {

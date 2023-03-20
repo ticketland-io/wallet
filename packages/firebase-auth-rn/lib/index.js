@@ -121,7 +121,8 @@ const Auth = Record({
   signInWithAppleId,
   signOutUser,
   onUserChanged,
-  accessToken
+  accessToken,
+  getIdToken
 })
 
 export default Auth

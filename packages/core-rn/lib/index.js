@@ -61,7 +61,6 @@ const initWeb3Auth = async (self, dappShare) => {
     extraLoginOptions: {
       id_token: await self.authProvider.getIdToken(),
       verifierIdField: 'sub',
-      domain,
     },
   });
 }

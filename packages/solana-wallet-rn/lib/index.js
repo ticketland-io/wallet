@@ -63,8 +63,6 @@ const init = async (self, seed) => {
 
   const account = await deriveAccount(self, 0);
   self.publicKey = account.publicKey;
-
-  return mnemonic
 }
 
 const Wallet = Record({

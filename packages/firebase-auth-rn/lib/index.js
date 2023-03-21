@@ -13,7 +13,7 @@ GoogleSignin.configure({webClientId: '711003129445-2js3agurj1cg8vleo0s4o4reppep4
 const signInWithCredential = async (credential, email) => {
   const [provider] = await auth().fetchSignInMethodsForEmail(email)
 
-  if (credential.providerId === provider) {
+  if (!provider || credential.providerId === provider) {
     return auth().signInWithCredential(credential)
   } else {
     const error = new Error('User already singed up with a different provider')
@@ -121,7 +121,8 @@ const Auth = Record({
   signInWithAppleId,
   signOutUser,
   onUserChanged,
-  accessToken
+  accessToken,
+  getIdToken
 })
 
 export default Auth

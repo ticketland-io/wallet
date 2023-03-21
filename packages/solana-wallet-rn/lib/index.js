@@ -13,7 +13,7 @@ const getSeed = async () => {
   const result = await EncryptedStorage.getItem(STORAGE_KEY);
 
   if (result !== undefined) {
-    return JSON.parse(result);
+    return JSON.parse(result).secretKey;
   }
 
   throw new Error('Storage key undefined');
@@ -63,8 +63,6 @@ const init = async (self, seed) => {
 
   const account = await deriveAccount(self, 0);
   self.publicKey = account.publicKey;
-
-  return mnemonic
 }
 
 const Wallet = Record({

@@ -32,7 +32,6 @@ const initWeb3Auth = async (self, dappShare) => {
   const {
     clientId,
     verifier,
-    domain,
     scheme = 'io.ticketland.app',
     network = OPENLOGIN_NETWORK.MAINNET,
     sessionTime = 86400 * 7,
@@ -61,7 +60,6 @@ const initWeb3Auth = async (self, dappShare) => {
     extraLoginOptions: {
       id_token: await self.authProvider.getIdToken(),
       verifierIdField: 'sub',
-      domain,
     },
   });
 }

@@ -46,7 +46,7 @@ const accessToken = async () => {
   const token = jwt_decode(auth.currentUser.accessToken)
 
   if (now > token.exp) {
-    await getIdToken()
+    await self.getIdToken()
   }
 
   return auth.currentUser.accessToken

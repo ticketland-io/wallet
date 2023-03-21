@@ -108,7 +108,7 @@ const accessToken = async () => {
   const token = jwt_decode(idToken)
 
   if (now > token.exp) {
-    await getIdToken()
+    await self.getIdToken()
   }
 
   return idToken

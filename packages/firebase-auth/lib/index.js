@@ -37,7 +37,7 @@ const signInWithApple = async () => await signInWithPopup(auth, providers.apple)
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
-const getIdToken = async (forceRefresh = true) => {
+const getIdToken = async (self, forceRefresh = true) => {
   return await auth.currentUser.getIdToken(forceRefresh)
 }
 
@@ -46,7 +46,7 @@ const accessToken = async () => {
   const token = jwt_decode(auth.currentUser.accessToken)
 
   if (now > token.exp) {
-    await getIdToken()
+    await self.getIdToken()
   }
 
   return auth.currentUser.accessToken

@@ -10,14 +10,14 @@ const {RNTwitterSignIn} = NativeModules;
 RNTwitterSignIn.init('dk0aQKfsCfc9eH2l8A2NPEdio', 'h2tnRBEsSmCm72Xa9d1o3Ss7L5YNHlkoY7MRMPjIgHglgfLNLU')
 GoogleSignin.configure({webClientId: '711003129445-2js3agurj1cg8vleo0s4o4reppep444u.apps.googleusercontent.com'});
 
-const checkEmailExists = async (email) => {
+const checkEmailExists = async (email, credential) => {
   const [provider] = await auth().fetchSignInMethodsForEmail(email)
 
   return !provider || credential.providerId === provider
 }
 
 const signInWithCredential = async (credential, email) => {
-  if (await checkEmailExists(email)) {
+  if (await checkEmailExists(email, credential)) {
     return auth().signInWithCredential(credential)
   } else {
     const error = new Error('User already singed up with a different provider')

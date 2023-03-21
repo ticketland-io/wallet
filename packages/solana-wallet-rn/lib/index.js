@@ -13,7 +13,7 @@ const getSeed = async () => {
   const result = await EncryptedStorage.getItem(STORAGE_KEY);
 
   if (result !== undefined) {
-    return JSON.parse(result);
+    return JSON.parse(result).secretKey;
   }
 
   throw new Error('Storage key undefined');
@@ -53,7 +53,7 @@ const encryptKey = async (secretKey) => {
 
 const deriveAccount = async (self, index) => {
   const seed = await getSeed(self);
-  const hdkey = HDKey.fromMasterSeed(Buffer.from(seed.secretKey, 'hex'));
+  const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
   const childkey = hdkey.derive(`m/44'/501'/0'/${index}'`);
   return Keypair.fromSeed(childkey.privateKey);
 }

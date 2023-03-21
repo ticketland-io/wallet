@@ -37,7 +37,7 @@ const signInWithApple = async () => await signInWithPopup(auth, providers.apple)
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
-const getIdToken = async (forceRefresh = true) => {
+const getIdToken = async (self, forceRefresh = true) => {
   return await auth.currentUser.getIdToken(forceRefresh)
 }
 

@@ -45,6 +45,19 @@ const createNewWallet = async (self) => {
 const restoreExistingWallet = async (self, dappShare) => {
   await initWeb3Auth(self, dappShare)
 
+  // If the user is not connected, we need to connect them first before doing the request
+  if (!await isConnected(self)) {
+    // Connect auth 2.0 account with web3Auth
+    await self.web3Auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+      loginProvider: "jwt",
+      extraLoginOptions: {
+        id_token: await self.authProvider.getIdToken(),
+        verifierIdField: "sub", // same as your JWT Verifier ID
+        domain: self.web3AuthConfig.domain,
+      },
+    });
+  }
+
   const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
   const custodyWallet = self.Wallet()
   await custodyWallet.init(seed)

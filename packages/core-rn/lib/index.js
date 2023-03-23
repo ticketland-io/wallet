@@ -5,7 +5,7 @@ import * as account from './account';
 
 const createNewWallet = async (self) => {
   await initWeb3Auth(self, undefined);
-  const seed = self.webAuthState.privKey;
+  const seed = self.webAuthState.ed25519PrivKey;
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed);
 
@@ -21,7 +21,7 @@ const createNewWallet = async (self) => {
 const restoreExistingWallet = async (self, dappShare) => {
   await initWeb3Auth(self, dappShare);
 
-  const seed = self.webAuthState.privKey;
+  const seed = self.webAuthState.ed25519PrivKey;
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed);
 

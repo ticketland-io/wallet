@@ -13,8 +13,8 @@ GoogleSignin.configure({webClientId: '711003129445-2js3agurj1cg8vleo0s4o4reppep4
 const signInWithCredential = async (credential, email) => {
   const [provider] = await auth().fetchSignInMethodsForEmail(email)
 
-  /*check if email has been used with a provider if not then login 
-  otherwise check if the provider is the same one as in the credential*/
+  //check if email has been used with a provider if not then login 
+  //otherwise check if the provider is the same one as in the credential
   if (!provider || credential.providerId === provider) {
     return auth().signInWithCredential(credential)
   } else {

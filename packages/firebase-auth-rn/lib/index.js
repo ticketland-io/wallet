@@ -11,7 +11,13 @@ RNTwitterSignIn.init('dk0aQKfsCfc9eH2l8A2NPEdio', 'h2tnRBEsSmCm72Xa9d1o3Ss7L5YNH
 GoogleSignin.configure({webClientId: '711003129445-2js3agurj1cg8vleo0s4o4reppep444u.apps.googleusercontent.com'});
 
 const signInWithCredential = async (credential, email) => {
-  const [provider] = await auth().fetchSignInMethodsForEmail(email)
+  let provider
+  //Apple api returns users email only on first login. https://github.com/invertase/react-native-apple-authentication#faqs
+  //So on first login where we check the mail for use on other providers, the mail will be defined so the check will be valid.
+  //On later logins the email will be undefined but the user will be already logged in using the apple provider so no need for provider check
+  if (email) {
+    provider = (await auth().fetchSignInMethodsForEmail(email))[0]
+  }
 
   // Check if email has been used with a provider if not then login 
   // otherwise check if the provider is the same one as in the credential

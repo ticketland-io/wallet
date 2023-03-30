@@ -12,9 +12,9 @@ GoogleSignin.configure({webClientId: '711003129445-2js3agurj1cg8vleo0s4o4reppep4
 
 const signInWithCredential = async (credential, email) => {
   let provider
-  //Apple api returns users email only on first login. https://github.com/invertase/react-native-apple-authentication#faqs
-  //So on first login where we check the mail for use on other providers, the mail will be defined so the check will be valid.
-  //On later logins the email will be undefined but the user will be already logged in using the apple provider so no need for provider check
+  // Apple api returns users email only on first login. https://github.com/invertase/react-native-apple-authentication#faqs
+  // So on first login where we check the mail for use on other providers, the mail will be defined so the check will be valid.
+  // On later logins the email will be undefined but the user will be already logged in using the apple provider so no need for provider check
   if (email) {
     provider = (await auth().fetchSignInMethodsForEmail(email))[0]
   }

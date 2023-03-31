@@ -41,7 +41,7 @@ const getIdToken = async (self, forceRefresh = true) => {
   return await auth.currentUser.getIdToken(forceRefresh)
 }
 
-const accessToken = async () => {
+const accessToken = async self => {
   const now = Date.now() / 1000
   const token = jwt_decode(auth.currentUser.accessToken)
 

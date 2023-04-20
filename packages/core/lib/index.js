@@ -101,6 +101,17 @@ const initWeb3Auth = async (self, dappShare) => {
   }
 }
 
+const logout = async (self) => {
+  try {
+    if (await isConnected(self)) {
+      await self.web3Auth.logout()
+    }
+  }
+  catch(error) {
+    // ignore
+  }
+}
+
 const bootstrap = async (self) => {
   try {
     const account = await self.fetchAccount()
@@ -137,6 +148,7 @@ export const WalletCore = Record({
   
   init,
   bootstrap,
+  logout,
 
   ...account,
 });

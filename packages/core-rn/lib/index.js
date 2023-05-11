@@ -1,6 +1,7 @@
+import EncryptedStorage from 'react-native-encrypted-storage';
 import Record from '@ppoliani/im-record';
 import * as WebBrowser from '@toruslabs/react-native-web-browser';
-import Web3Auth, {LOGIN_PROVIDER, OPENLOGIN_NETWORK} from '@web3auth/react-native-sdk';
+import Web3Auth, {LOGIN_PROVIDER, OPENLOGIN_NETWORK} from '@ticketland-io/web3auth-rn';
 import * as account from './account';
 
 const createNewWallet = async (self) => {
@@ -39,7 +40,7 @@ const initWeb3Auth = async (self, dappShare) => {
 
   const redirectUrl = `${scheme}://openlogin`;
 
-  const web3Auth = new Web3Auth(WebBrowser, {
+  const web3Auth = new Web3Auth(WebBrowser, EncryptedStorage, {
     clientId,
     network,
     loginConfig: {
@@ -51,17 +52,23 @@ const initWeb3Auth = async (self, dappShare) => {
     },
   });
 
-  self.webAuthState = await web3Auth.login({
-    loginProvider: LOGIN_PROVIDER.JWT,
-    redirectUrl,
-    dappShare,
-    mfaLevel: 'mandatory',
-    sessionTime,
-    extraLoginOptions: {
-      id_token: await self.authProvider.getIdToken(),
-      verifierIdField: 'sub',
-    },
-  });
+  const state = await web3Auth.init()
+
+  if (state) {
+    self.webAuthState = state
+  } else {
+    self.webAuthState = await web3Auth.login({
+      loginProvider: LOGIN_PROVIDER.JWT,
+      redirectUrl,
+      dappShare,
+      mfaLevel: 'mandatory',
+      sessionTime,
+      extraLoginOptions: {
+        id_token: await self.authProvider.getIdToken(),
+        verifierIdField: 'sub',
+      },
+    });
+  }
 }
 
 const logout = async (self) => {
@@ -80,8 +87,8 @@ const bootstrap = async (self) => {
     const account = await self.fetchAccount();
     return await restoreExistingWallet(self, account.dapp_share);
   }
-  catch(error) {
-    if(error.status == 404) {
+  catch (error) {
+    if (error.status == 404) {
       return await createNewWallet(self);
     }
 
@@ -106,7 +113,7 @@ export const WalletCore = Record({
   authProvider: null,
   webAuthState: null,
   web3AuthConfig: null,
-  
+
   init,
   bootstrap,
   logout,

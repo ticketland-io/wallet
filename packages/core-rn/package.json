@@ -13,6 +13,7 @@
     "@ppoliani/im-record": "^2.0.0",
     "@ticketland-io/wallet-common": "^0.1.0",
     "@toruslabs/react-native-web-browser": "^1.1.0",
-    "@web3auth/react-native-sdk": "^3.5.0"
+    "@ticketland-io/web3auth-rn": "3.6.0",
+    "react-native-encrypted-storage": "4.0.3"
   }
 }

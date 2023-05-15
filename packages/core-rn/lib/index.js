@@ -44,10 +44,11 @@ const initWeb3Auth = async (self, dappShare) => {
     clientId,
     network,
     loginConfig: {
-      jwt: {
-        verifier,
-        typeOfLogin: 'jwt',
-        clientId,
+      clientId,
+      verifier,
+      typeOfLogin: 'jwt',
+      jwtParameters: {
+        client_id: clientId
       },
     },
   });

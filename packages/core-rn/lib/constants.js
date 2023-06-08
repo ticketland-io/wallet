@@ -1,1 +1,1 @@
-export {OPENLOGIN_NETWORK} from '@ticketland-io/web3auth-rn';
+export {OPENLOGIN_NETWORK} from '@web3auth/react-native-sdk';

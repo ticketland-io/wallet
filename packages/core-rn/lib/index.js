@@ -1,7 +1,7 @@
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Record from '@ppoliani/im-record';
 import * as WebBrowser from '@toruslabs/react-native-web-browser';
-import Web3Auth, {LOGIN_PROVIDER, OPENLOGIN_NETWORK} from '@ticketland-io/web3auth-rn';
+import Web3Auth, {LOGIN_PROVIDER, OPENLOGIN_NETWORK} from '@web3auth/react-native-sdk';
 import * as account from './account';
 
 const createNewWallet = async (self) => {
@@ -44,21 +44,20 @@ const initWeb3Auth = async (self, dappShare) => {
     clientId,
     network,
     loginConfig: {
-      clientId,
-      verifier,
-      typeOfLogin: 'jwt',
-      jwtParameters: {
-        client_id: clientId
+      jwt: {
+        verifier,
+        typeOfLogin: 'jwt',
+        clientId,
       },
     },
   });
 
-  const state = await web3Auth.init()
+  await web3Auth.init()
 
-  if (state) {
-    self.webAuthState = state
+  if (web3Auth.state?.privKey) {
+    self.webAuthState = web3Auth.state
   } else {
-    self.webAuthState = await web3Auth.login({
+    await web3Auth.login({
       loginProvider: LOGIN_PROVIDER.JWT,
       redirectUrl,
       dappShare,
@@ -69,6 +68,8 @@ const initWeb3Auth = async (self, dappShare) => {
         verifierIdField: 'sub',
       },
     });
+
+    self.webAuthState = web3Auth.state
   }
 }
 

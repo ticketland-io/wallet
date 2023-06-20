@@ -1,0 +1,21 @@
+{
+  "name": "@ticketland-io/sui-wallet",
+  "version": "0.1.0",
+  "license": "BUSL-1.1",
+  "main": "lib/index.js",
+  "author": "Pavlos Polianidis <pavlos@ticketland.io> (https://ticketland.io)",
+  "repository": "git@github.com:ticketland-io/wallet.git",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "@mysten/sui.js": "^0.36.0",
+    "@ppoliani/im-record": "^2.0.0",
+    "@ticketland-io/indexdb-storage": "^0.1.0",
+    "@ticketland-io/web-enclave": "^0.1.0",
+    "ed25519-hd-key": "^1.3.0",
+    "keccak256": "^1.0.6",
+    "tweetnacl": "^1.0.3"
+  }
+}

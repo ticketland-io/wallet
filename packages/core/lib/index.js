@@ -19,12 +19,12 @@ const createNewWallet = async (self) => {
   await initWeb3Auth(self, undefined);
 
   const user = await self.web3Auth.getUserInfo();
-  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
+  const seed = await self.web3Auth.provider.request({method: "private_key"});
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed);
   
   // create the user on the back end
-  await self.createAccount(user.dappShare, custodyWallet.publicKey.toBase58())
+  await self.createAccount(user.dappShare, custodyWallet.publicKey.toSuiAddress())
 
   return custodyWallet;
 }
@@ -32,7 +32,7 @@ const createNewWallet = async (self) => {
 const restoreExistingWallet = async (self, dappShare) => {
   await initWeb3Auth(self, dappShare)
 
-  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
+  const seed = await self.web3Auth.provider.request({method: "private_key"});
   const custodyWallet = self.Wallet()
   await custodyWallet.init(seed)
 
@@ -43,9 +43,7 @@ const initWeb3Auth = async (self, dappShare) => {
   const {
     clientId,
     verifier,
-    chainId,
     chainNamespace,
-    rpcTarget,
     sessionTime = 86400 * 7, // 7 days
     web3AuthNetwork = "mainnet",
   } = self.web3AuthConfig;
@@ -53,7 +51,7 @@ const initWeb3Auth = async (self, dappShare) => {
   const web3Auth = new Web3AuthNoModal({
     authMode: 'DAPP',
     clientId,
-    chainConfig: {chainNamespace, chainId, rpcTarget},
+    chainConfig: {chainNamespace},
     sessionTime,
     web3AuthNetwork,
     useCoreKitKey: false,

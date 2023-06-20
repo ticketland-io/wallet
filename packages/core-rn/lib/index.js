@@ -13,7 +13,7 @@ const createNewWallet = async (self) => {
   // create the user on the back end
   await self.createAccount(
     self.webAuthState.userInfo.dappShare,
-    custodyWallet.publicKey.toBase58()
+    custodyWallet.publicKey.toSuiAddress()
   );
 
   return custodyWallet;

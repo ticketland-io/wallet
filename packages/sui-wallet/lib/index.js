@@ -64,7 +64,7 @@ const deriveAccount = async (self, index) => {
   return keypair
 }
 
-const init = async (self, seed) => {
+const init = async (self, seed, rpcServer) => {
   self.storage = Storage();
   await self.storage.open();
 
@@ -74,6 +74,7 @@ const init = async (self, seed) => {
 
   const account = await deriveAccount(self, 0);
   self.publicKey = account.getPublicKey();
+  self.signer = new RawSigner(account, new JsonRpcProvider(new Connection({fullnode: rpcServer})));
 }
 
 const Wallet = Record({
@@ -83,12 +84,10 @@ const Wallet = Record({
   publicKey: null,
   storage: null,
   iv: null,
+  signer: null,
 
   init,
-  // Wallet interface
-  signTransaction,
-  signAllTransactions,
-  signMessage,
+  signAndExecuteTransaction,
 })
 
 export default Wallet

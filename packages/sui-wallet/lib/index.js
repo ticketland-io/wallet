@@ -4,16 +4,10 @@ import {
   Ed25519Keypair,
   JsonRpcProvider,
   RawSigner,
-  TransactionBlock,
-  fromB64,
 } from '@mysten/sui.js';
 import {derivePath} from 'ed25519-hd-key'
-import nacl from 'tweetnacl'
-import keccak256 from 'keccak256'
 import Record from '@ppoliani/im-record'
 import Storage from '@ticketland-io/indexdb-storage'
-
-// const {Keypair} = anchor.web3
 
 const getSeed = async (self) => {
   // read the Web Crypto API key from the storage
@@ -28,26 +22,9 @@ const getSeed = async (self) => {
   return seed
 }
 
-const signTransaction = async (self, tx, index = 0) => {
-  const account = await deriveAccount(self, index);
-  tx.partialSign(account);
-  
-  return tx;
-}
-
-const signAllTransactions = async (self, txs, index = 0) => {
-  const account = await deriveAccount(self, index);
-
-  return txs.map((t) => {
-    t.partialSign(account);
-    return t;
-  });
-}
-
-const signMessage = async (self, msg, index = 0) => {
-  const account = await deriveAccount(self, index);
-  return nacl.sign.detached(keccak256(msg), account.secretKey);
-}
+const signAndExecuteTransaction = async (self, txb) => (
+  self.signer.signAndExecuteTransactionBlock({transactionBlock: txb})
+)
 
 const encryptKey = async (self, value) => {
   const key = await self.enclave.generateKey();
@@ -77,6 +54,7 @@ const init = async (self, seed, rpcServer) => {
   self.signer = new RawSigner(account, new JsonRpcProvider(new Connection({fullnode: rpcServer})));
 }
 
+// TODO: add signer const signer = new RawSigner(keypair, provider);
 const Wallet = Record({
   // must set during creation not initialization!
   enclave: null,

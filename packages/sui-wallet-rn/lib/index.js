@@ -3,16 +3,10 @@ import {
   Ed25519Keypair,
   JsonRpcProvider,
   RawSigner,
-  TransactionBlock,
-  fromB64,
 } from '@mysten/sui.js';
 import {derivePath} from 'ed25519-hd-key'
-import nacl from 'tweetnacl'
-import keccak256 from 'keccak256'
 import Record from '@ppoliani/im-record'
 import EncryptedStorage from 'react-native-encrypted-storage'
-
-// const {Keypair} = anchor.web3
 
 const STORAGE_KEY = 'ACCOUNT::PRIVE_KEY'
 
@@ -24,27 +18,6 @@ const getSeed = async () => {
   }
 
   throw new Error('Storage key undefined');
-}
-
-const signTransaction = async (self, tx, index = 0) => {
-  const account = await deriveAccount(self, index);
-  tx.partialSign(account);
-
-  return tx
-}
-
-const signAllTransactions = async (self, txs, index = 0) => {
-  const account = await deriveAccount(self, index);
-
-  return txs.map((t) => {
-    t.partialSign(account)
-    return t
-  })
-}
-
-const signMessage = async (self, msg, index = 0) => {
-  const account = await deriveAccount(self, index);
-  return nacl.sign.detached(keccak256(msg), account.secretKey);
 }
 
 const encryptKey = async (secretKey) => {
@@ -66,22 +39,20 @@ const deriveAccount = async (self, index) => {
   return keypair
 }
 
-const init = async (self, seed) => {
+const init = async (self, seed, rpcServer) => {
   await encryptKey(seed);
 
   const account = await deriveAccount(self, 0);
   self.publicKey = account.getPublicKey();
+  self.signer = new RawSigner(account, new JsonRpcProvider(new Connection({fullnode: rpcServer})));
 }
 
 const Wallet = Record({
   seed: null,
   publicKey: null,
+  signer: null,
 
   init,
-  // Wallet interface
-  signTransaction,
-  signAllTransactions,
-  signMessage,
 })
 
 export default Wallet

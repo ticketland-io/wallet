@@ -4,11 +4,11 @@ import * as WebBrowser from '@toruslabs/react-native-web-browser';
 import Web3Auth, {LOGIN_PROVIDER, OPENLOGIN_NETWORK} from '@web3auth/react-native-sdk';
 import * as account from './account';
 
-const createNewWallet = async (self) => {
+const createNewWallet = async (self, rpcServer) => {
   await initWeb3Auth(self, undefined);
   const seed = self.webAuthState.ed25519PrivKey;
   const custodyWallet = self.Wallet();
-  await custodyWallet.init(seed);
+  await custodyWallet.init(seed, rpcServer);
 
   // create the user on the back end
   await self.createAccount(
@@ -19,12 +19,12 @@ const createNewWallet = async (self) => {
   return custodyWallet;
 }
 
-const restoreExistingWallet = async (self, dappShare) => {
+const restoreExistingWallet = async (self, dappShare, rpcServer) => {
   await initWeb3Auth(self, dappShare);
 
   const seed = self.webAuthState.ed25519PrivKey;
   const custodyWallet = self.Wallet();
-  await custodyWallet.init(seed);
+  await custodyWallet.init(seed, rpcServer);
 
   return custodyWallet;
 }
@@ -87,11 +87,11 @@ const logout = async (self) => {
 const bootstrap = async (self) => {
   try {
     const account = await self.fetchAccount();
-    return await restoreExistingWallet(self, account.dapp_share);
+    return await restoreExistingWallet(self, account.dapp_share, rpcServer);
   }
   catch (error) {
     if (error.status == 404) {
-      return await createNewWallet(self);
+      return await createNewWallet(self, rpcServer);
     }
 
     throw error

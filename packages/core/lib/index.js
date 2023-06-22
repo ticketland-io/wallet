@@ -110,7 +110,7 @@ const logout = async (self) => {
   }
 }
 
-const bootstrap = async (self,rpcServer) => {
+const bootstrap = async (self, rpcServer) => {
   try {
     const account = await self.fetchAccount()
     return await restoreExistingWallet(self, account.dapp_share, rpcServer)

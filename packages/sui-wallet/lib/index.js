@@ -1,4 +1,3 @@
-// import * as anchor from '@project-serum/anchor'
 import {
   Connection,
   Ed25519Keypair,
@@ -50,7 +49,6 @@ const init = async (self, seed, rpcServer) => {
   self.signer = new RawSigner(account, new JsonRpcProvider(new Connection({fullnode: rpcServer})));
 }
 
-// TODO: add signer const signer = new RawSigner(keypair, provider);
 const Wallet = Record({
   // must set during creation not initialization!
   enclave: null,

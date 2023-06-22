@@ -22,10 +22,6 @@ const getSeed = async (self) => {
   return seed
 }
 
-const signAndExecuteTransaction = async (self, txb) => (
-  self.signer.signAndExecuteTransactionBlock({transactionBlock: txb})
-)
-
 const encryptKey = async (self, value) => {
   const key = await self.enclave.generateKey();
   await self.storage.writeKey(key);
@@ -65,7 +61,6 @@ const Wallet = Record({
   signer: null,
 
   init,
-  signAndExecuteTransaction,
 })
 
 export default Wallet

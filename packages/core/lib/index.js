@@ -10,31 +10,31 @@ const isConnected = async (self) => {
   try {
     const user = await self.web3Auth.getUserInfo();
     return Boolean(user)
-  } catch(_) {
+  } catch (_) {
     return false
   }
 }
 
-const createNewWallet = async (self) => {
+const createNewWallet = async (self, rpcServer) => {
   await initWeb3Auth(self, undefined);
 
   const user = await self.web3Auth.getUserInfo();
-  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
+  const seed = await self.web3Auth.provider.request({method: "private_key"});
   const custodyWallet = self.Wallet();
-  await custodyWallet.init(seed);
-  
+  await custodyWallet.init(seed, rpcServer);
+
   // create the user on the back end
-  await self.createAccount(user.dappShare, custodyWallet.publicKey.toBase58())
+  await self.createAccount(user.dappShare, custodyWallet.publicKey.toSuiAddress())
 
   return custodyWallet;
 }
 
-const restoreExistingWallet = async (self, dappShare) => {
+const restoreExistingWallet = async (self, dappShare, rpcServer) => {
   await initWeb3Auth(self, dappShare)
 
-  const seed = await self.web3Auth.provider.request({method: "solanaPrivateKey", params: {}});
+  const seed = await self.web3Auth.provider.request({method: "private_key"});
   const custodyWallet = self.Wallet()
-  await custodyWallet.init(seed)
+  await custodyWallet.init(seed, rpcServer)
 
   return custodyWallet
 }
@@ -43,9 +43,7 @@ const initWeb3Auth = async (self, dappShare) => {
   const {
     clientId,
     verifier,
-    chainId,
     chainNamespace,
-    rpcTarget,
     sessionTime = 86400 * 7, // 7 days
     web3AuthNetwork = "mainnet",
   } = self.web3AuthConfig;
@@ -53,7 +51,7 @@ const initWeb3Auth = async (self, dappShare) => {
   const web3Auth = new Web3AuthNoModal({
     authMode: 'DAPP',
     clientId,
-    chainConfig: {chainNamespace, chainId, rpcTarget},
+    chainConfig: {chainNamespace},
     sessionTime,
     web3AuthNetwork,
     useCoreKitKey: false,
@@ -77,7 +75,7 @@ const initWeb3Auth = async (self, dappShare) => {
       dappShare,
     }
   });
-  
+
   web3Auth.configureAdapter(openloginAdapter);
 
   await web3Auth.init();
@@ -107,19 +105,19 @@ const logout = async (self) => {
       await self.web3Auth.logout()
     }
   }
-  catch(error) {
+  catch (error) {
     // ignore
   }
 }
 
-const bootstrap = async (self) => {
+const bootstrap = async (self, rpcServer) => {
   try {
     const account = await self.fetchAccount()
-    return await restoreExistingWallet(self, account.dapp_share)
+    return await restoreExistingWallet(self, account.dapp_share, rpcServer)
   }
-  catch(error) {
-    if(error.status == 404) {
-      return await createNewWallet(self)
+  catch (error) {
+    if (error.status == 404) {
+      return await createNewWallet(self, rpcServer)
     }
 
     throw error
@@ -145,7 +143,7 @@ export const WalletCore = Record({
   authProvider: null,
   web3Auth: null,
   web3AuthConfig: null,
-  
+
   init,
   bootstrap,
   logout,

@@ -3,7 +3,7 @@ import {
   Ed25519Keypair,
   JsonRpcProvider,
   RawSigner,
-} from '@mysten/sui.js';
+} from '@mysten/sui.js'
 import {derivePath} from 'ed25519-hd-key'
 import Record from '@ppoliani/im-record'
 import Storage from '@ticketland-io/indexdb-storage'
@@ -22,31 +22,32 @@ const getSeed = async (self) => {
 }
 
 const encryptKey = async (self, value) => {
-  const key = await self.enclave.generateKey();
-  await self.storage.writeKey(key);
+  const key = await self.enclave.generateKey()
+  await self.storage.writeKey(key)
 
-  return await self.enclave.encrypt(value, key);
+  return await self.enclave.encrypt(value, key)
 }
 
 const deriveAccount = async (self, index) => {
-  const seed = await getSeed(self);
-  const {key} = derivePath(`m/44'/784'/0'/0'/${index}'`, seed);
+  const seed = await getSeed(self)
+  const {key} = derivePath(`m/44'/784'/0'/0'/${index}'`, seed)
   const keypair = Ed25519Keypair.fromSecretKey(key)
 
   return keypair
 }
 
 const init = async (self, seed, rpcServer) => {
-  self.storage = Storage();
-  await self.storage.open();
+  self.storage = Storage()
+  await self.storage.open()
 
-  const {cipher, iv} = await encryptKey(self, seed);
-  self.seed = self.enclave.pack(cipher);
-  self.iv = self.enclave.pack(iv);
+  const {cipher, iv} = await encryptKey(self, seed)
+  self.seed = self.enclave.pack(cipher)
+  self.iv = self.enclave.pack(iv)
 
-  const account = await deriveAccount(self, 0);
-  self.publicKey = account.getPublicKey();
-  self.signer = new RawSigner(account, new JsonRpcProvider(new Connection({fullnode: rpcServer})));
+  const account = await deriveAccount(self, 0)
+  self.publicKey = account.getPublicKey()
+  self.provider = new JsonRpcProvider(new Connection({fullnode: rpcServer}))
+  self.signer = new RawSigner(account, self.provider)
 }
 
 const Wallet = Record({
@@ -57,6 +58,7 @@ const Wallet = Record({
   storage: null,
   iv: null,
   signer: null,
+  provider: null,
 
   init,
 })

@@ -4,15 +4,25 @@ import * as WebBrowser from '@toruslabs/react-native-web-browser';
 import Web3Auth, {LOGIN_PROVIDER, OPENLOGIN_NETWORK} from '@web3auth/react-native-sdk';
 import * as account from './account';
 
+
+const isConnected = async (self) => {
+  try {
+    const user = await self.web3Auth.userInfo();
+    return Boolean(user)
+  } catch (_) {
+    return false
+  }
+}
+
 const createNewWallet = async (self, rpcServer) => {
   await initWeb3Auth(self, undefined);
-  const seed = self.webAuthState.privKey;
+  const seed = self.web3Auth.privKey;
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed, rpcServer);
 
   // create the user on the back end
   await self.createAccount(
-    self.webAuthState.userInfo.dappShare,
+    self.web3Auth.userInfo().dappShare,
     custodyWallet.publicKey.toSuiAddress()
   );
 
@@ -22,7 +32,7 @@ const createNewWallet = async (self, rpcServer) => {
 const restoreExistingWallet = async (self, dappShare, rpcServer) => {
   await initWeb3Auth(self, dappShare);
 
-  const seed = self.webAuthState.privKey;
+  const seed = self.web3Auth.privKey;
   const custodyWallet = self.Wallet();
   await custodyWallet.init(seed, rpcServer);
 
@@ -53,10 +63,9 @@ const initWeb3Auth = async (self, dappShare) => {
   });
 
   await web3Auth.init()
+  self.web3Auth = web3Auth
 
-  if (web3Auth.state?.privKey) {
-    self.webAuthState = web3Auth.state
-  } else {
+  if (!await isConnected(self)) {
     await web3Auth.login({
       loginProvider: LOGIN_PROVIDER.JWT,
       redirectUrl,
@@ -68,16 +77,12 @@ const initWeb3Auth = async (self, dappShare) => {
         verifierIdField: 'sub',
       },
     });
-
-    self.webAuthState = web3Auth.state
   }
 }
 
 const logout = async (self) => {
   try {
-    const {clientId} = self.web3AuthConfig;
-
-    await self.web3Auth.logout({clientId})
+    await self.web3Auth.logout()
   }
   catch(error) {
     // ignore
@@ -113,7 +118,7 @@ export const WalletCore = Record({
   walletApi: '',
   Wallet: null,
   authProvider: null,
-  webAuthState: null,
+  web3Auth: null,
   web3AuthConfig: null,
 
   init,

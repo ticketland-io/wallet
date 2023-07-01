@@ -5,6 +5,8 @@ import {
   RawSigner,
 } from '@mysten/sui.js'
 import {derivePath} from 'ed25519-hd-key'
+import nacl from 'tweetnacl'
+import keccak256 from 'keccak256'
 import Record from '@ppoliani/im-record'
 import Storage from '@ticketland-io/indexdb-storage'
 
@@ -36,6 +38,11 @@ const deriveAccount = async (self, index) => {
   return keypair
 }
 
+const signMessage = async (self, msg, index = 0) => {
+  const account = await deriveAccount(self, index);
+  return nacl.sign.detached(keccak256(msg), account.keypair.secretKey);
+}
+
 const init = async (self, seed, rpcServer) => {
   self.storage = Storage()
   await self.storage.open()
@@ -61,6 +68,7 @@ const Wallet = Record({
   provider: null,
 
   init,
+  signMessage,
 })
 
 export default Wallet

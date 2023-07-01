@@ -5,6 +5,8 @@ import {
   RawSigner,
 } from '@mysten/sui.js'
 import {derivePath} from 'ed25519-hd-key'
+import nacl from 'tweetnacl'
+import keccak256 from 'keccak256'
 import Record from '@ppoliani/im-record'
 import EncryptedStorage from 'react-native-encrypted-storage'
 
@@ -39,6 +41,11 @@ const deriveAccount = async (self, index) => {
   return keypair
 }
 
+const signMessage = async (self, msg, index = 0) => {
+  const account = await deriveAccount(self, index);
+  return nacl.sign.detached(keccak256(msg), account.keypair.secretKey);
+}
+
 const init = async (self, seed, rpcServer) => {
   await encryptKey(seed)
 
@@ -55,6 +62,7 @@ const Wallet = Record({
   provider: null,
 
   init,
+  signMessage,
 })
 
 export default Wallet

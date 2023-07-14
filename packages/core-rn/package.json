@@ -1,6 +1,6 @@
 {
   "name": "@ticketland-io/wallet-core-rn",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "BUSL-1.1",
   "main": "lib/index.js",
   "author": "Pavlos Polianidis <pavlos@ticketland.io> (https://ticketland.io)",
